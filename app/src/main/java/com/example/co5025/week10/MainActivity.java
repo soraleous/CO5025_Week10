@@ -1,6 +1,8 @@
 package com.example.co5025.week10;
 
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,7 +15,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+    //Variables
     EditText editUsername;
     EditText editPassword;
     Button butLogin;
@@ -35,12 +40,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         .setAction("Action", null).show();
             }
         });
+
+        //MediaPlayer for background music I guess since its within onCreate
+        MediaPlayer player;
+        AssetFileDescriptor afd;
+        try {
+            afd = getAssets().openFd("anuda-day.mp3");
+            player = new MediaPlayer();
+            player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+            player.setLooping(false);
+            player.prepare();
+            player.start();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        //onCreate Variables
         butLogin = (Button) findViewById(R.id.but_login);
         editUsername = (EditText) findViewById(R.id.edit_username);
         editPassword = (EditText) findViewById(R.id.edit_password);
         butLogin.setOnClickListener(this);
+        editUsername.setOnClickListener(this);
         errorMessage = (TextView) findViewById(R.id.error_message);
         if (getIntent().getBooleanExtra("EXIT", false)) finish();
+        //end of onCreate Variables
     }
 
     @Override
@@ -67,19 +90,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        if (checkPassword()){
-            Intent i;
-            switch (view.getId()){
-                case R.id.but_login:
+        Intent i;
+        switch (view.getId()){
+            case R.id.but_login:
+                if (checkPassword()) {
                     i = new Intent(this, GameActivity.class);
                     startActivity(i);
                     break;
+                } else {
+                    errorMessage.setText(R.string.error_message_text);
+                    editPassword.setText("");
+                    editUsername.setText("");
+                }
+            case R.id.edit_username:
+                if (editUsername.getText().toString().equals("Username")){
+                    editUsername.setText("");
+                }
             }
-        }else{
-            errorMessage.setText(R.string.error_message_text);
-            editPassword.setText("");
-            editUsername.setText("");
-        }
     }
 
     public boolean checkPassword(){

@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="username_text">Username:</string>
     <string name="password_text">Password:</string>
-    <string name="editusername_text">Name</string>
+    <string name="editusername_text">Username</string>
     <string name="login_button_text">LOGIN</string>
     <string name="title_activity_game">GameActivity</string>
     <string name="error_message_text">Login Failed</string>
